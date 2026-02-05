@@ -1,1 +1,9 @@
 nul
+
+#IDE
+.vscode/
+.idea/
+
+#AI
+.claude/
+.agent/

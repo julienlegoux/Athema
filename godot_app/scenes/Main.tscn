@@ -1,0 +1,86 @@
+[gd_scene load_steps=5 format=3 uid="uid://c9z8x1y2b4d5"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/AIService.gd" id="2_ai"]
+[ext_resource type="Script" path="res://scripts/TTSService.gd" id="3_tts"]
+[ext_resource type="PackedScene" uid="uid://b8x7y2z1a3c4" path="res://scenes/SpineCharacter.tscn" id="4_char"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.1, 1)
+
+[node name="CharacterContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="CharacterContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="SpineCharacter" parent="CharacterContainer/SubViewport" instance=ExtResource("4_char")]
+position = Vector2(640, 500)
+
+[node name="UI" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -250.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="ChatLog" type="RichTextLabel" parent="UI"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_following = true
+
+[node name="InputRow" type="HBoxContainer" parent="UI"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputElement" type="LineEdit" parent="UI/InputRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Type your message here..."
+
+[node name="SendButton" type="Button" parent="UI/InputRow"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Send"
+
+[node name="Spacer" type="Control" parent="UI"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="AIService" type="Node" parent="."]
+script = ExtResource("2_ai")
+
+[node name="TTSService" type="Node" parent="."]
+script = ExtResource("3_tts")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
