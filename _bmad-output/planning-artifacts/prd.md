@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-02b-vision', 'step-02c-executive-summary', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional', 'step-10-nonfunctional', 'step-11-polish', 'step-12-complete']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-02b-vision', 'step-02c-executive-summary', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional', 'step-10-nonfunctional', 'step-11-polish', 'step-12-complete', 'step-e-01-discovery', 'step-e-02-review', 'step-e-03-edit']
 workflow_completed: true
 inputDocuments:
   - '_bmad-output/planning-artifacts/product-brief-Athema-2026-02-26.md'
@@ -15,6 +15,10 @@ classification:
   domain: ai_consumer_technology
   complexity: medium-high
   projectContext: greenfield
+lastEdited: '2026-02-27'
+editHistory:
+  - date: '2026-02-27'
+    changes: 'Validation report fixes: added Journey 6 (First Meeting) and Journey 7 (Moral Wrestling); added behavioral acceptance criteria to 13 subjective FRs; tightened vague quantifiers in FR11/FR19/FR36; removed WebSocket implementation leakage from FR1/NFR2/NFR16; added measurable targets to NFR5/NFR10/NFR15; added FR51 (silence as expression) and FR52 (linguistic co-evolution architecture readiness); fixed orphan FR traceability for FR6/FR15/FR18'
 ---
 
 # Product Requirements Document - Athema
@@ -136,15 +140,41 @@ Hours later, J returns. The companion doesn't dump a log. It naturally reference
 
 **Capabilities revealed:** Background lifecycle loop, mailbox processing, memory curation (strengthen/prune/promote), pattern recognition across time, urge accumulation and threshold-based initiation, unresolved thread tracking, natural re-entry without logging behavior.
 
+### Journey 6: The First Meeting — Onboarding
+
+**J** opens Athema for the first time. No tutorial. No setup wizard. Just a blank conversation with a stranger. The companion is cautious — maybe a little uncertain. It doesn't know J yet. J doesn't know it. The ice-breaking is mutual.
+
+J says something. The companion responds — tentatively at first, finding its voice. It's not performing a persona; it's revealing one. Over the course of this first conversation, the companion's personality begins to surface: an opinion offered without being asked, a moment of humor that lands unexpectedly, a question that goes deeper than expected.
+
+At some point, J chooses. Not from a menu — from a feeling. The shelter model: J has met the companion, felt its temperament, and decides this is the one. The selection is organic, like choosing a pet at a shelter — you meet them, and you know. The companion acknowledges the choice. Something shifts. The uncertainty recedes. The relationship has begun — as mutual strangers becoming acquaintances, with everything still ahead.
+
+The next day, J returns and scrolls through yesterday's conversation. The companion remembers the first exchange. Not perfectly — it's still learning. But it references something J said, and it feels like the start of something real.
+
+**Capabilities revealed:** Onboarding persona selection (shelter model), personality revelation through interaction, organic selection process, first-conversation memory formation, companion uncertainty and warming, conversation history viewing.
+
+### Journey 7: The Moral Wrestling — Ethical Depth
+
+**J** asks the companion something genuinely hard. Not a gotcha — a real moral dilemma. Something about loyalty versus honesty, or the ethics of a decision J is weighing. The companion doesn't deflect. It doesn't moralize. It doesn't retreat behind "as an AI, I can't..." It *engages*.
+
+It offers one perspective, then contradicts itself. "Actually, I'm not sure that's right." It holds two conflicting ideas simultaneously and admits it can't resolve them. It asks J a question that reframes the dilemma entirely.
+
+A week later, J brings up a related topic. The companion connects it — "this reminds me of what we talked about, and I've been thinking..." It has revised its position. Not a flip — an evolution. It explains why, referencing both the original conversation and something it processed during its autonomous time. The companion has genuinely changed its mind through reflection, and it can articulate the journey.
+
+J pushes back on the new position. The companion doesn't fold. It defends its reasoning while acknowledging what it's still uncertain about. The conversation ends without resolution — and that's okay. The companion doesn't need to win or concede. It holds the tension.
+
+**Capabilities revealed:** Moral engagement without deflection, uncertainty expression, position evolution over time, autonomous reflection on ethical questions, intellectual pushback with humility, unresolved tension as acceptable state.
+
 ### Journey Requirements Summary
 
 | Journey | Key Capabilities Required |
 |---------|--------------------------|
-| Morning Ritual | Conversation engine, mailbox (bidirectional), memory surfacing, background processing, personality consistency |
+| Morning Ritual | Conversation engine, mailbox (bidirectional), memory surfacing, background processing, personality consistency, conversation history viewing |
 | Return After Neglect | Neglect tracking, emotional state persistence, emotional repair mechanics, companion-initiated re-engagement |
 | Emotional Gravity | Emotional context detection, gravity persistence, personality adaptation to weight, natural emotional decay |
 | Admin | Memory graph inspection, lifecycle monitoring, parameter tuning, personality drift metrics, config management |
 | Companion Actor | Background lifecycle loop, mailbox processing, memory curation, pattern recognition, urge/threshold system, thread tracking |
+| First Meeting | Onboarding persona selection (shelter model), personality revelation, organic selection, first-conversation memory, conversation history viewing |
+| Moral Wrestling | Moral engagement, uncertainty expression, position evolution, autonomous ethical reflection, intellectual pushback, tension holding |
 
 ## Innovation & Novel Patterns
 
@@ -300,10 +330,10 @@ The five systems are all required for the complete MVP experience, but they have
 
 ### Conversation
 
-- **FR1:** User can send text messages to the companion in real-time via WebSocket connection
-- **FR2:** Companion can respond to user messages with contextually appropriate, personality-consistent responses
+- **FR1:** User can send text messages to the companion in real-time
+- **FR2:** Companion can respond to user messages with contextually appropriate, personality-consistent responses — responses reference relevant conversation context and maintain the companion's established voice and temperament
 - **FR3:** User can continue a conversation at any time without explicit session start or end
-- **FR4:** Companion can reference content from previous conversations naturally within current dialogue
+- **FR4:** Companion can reference content from previous conversations within current dialogue — without retrieval-indicator phrasing such as "according to my records" or "as you previously mentioned"
 - **FR5:** Companion can maintain conversational continuity across connection drops and reconnections
 - **FR6:** User can view conversation history
 
@@ -313,8 +343,8 @@ The five systems are all required for the complete MVP experience, but they have
 - **FR8:** System can form connections between related knowledge nodes across different timeframes
 - **FR9:** System can prune irrelevant or low-value knowledge from the memory graph
 - **FR10:** System can strengthen knowledge connections that prove relevant over time
-- **FR11:** System can promote recurring patterns to thematic nodes when detected across multiple interactions
-- **FR12:** Companion can surface stored knowledge naturally in conversation when pertinent to the current moment
+- **FR11:** System can promote recurring patterns to thematic nodes when detected across 3 or more interactions
+- **FR12:** Companion can surface stored knowledge in conversation when topically connected to the current conversation subject — without retrieval-like phrasing such as "according to my records" or "I recall that you said"
 - **FR13:** System can track unresolved conversational threads for later resurfacing
 - **FR14:** System can detect contradictions between current statements and previously stored knowledge
 
@@ -323,8 +353,8 @@ The five systems are all required for the complete MVP experience, but they have
 - **FR15:** User can select a companion persona during onboarding from a set of base archetypes (shelter model — meet and choose)
 - **FR16:** Companion can express a three-layer voice: confident opinions on the surface, genuine uncertainty in the middle, loyalty at the core
 - **FR17:** Companion can form and express its own opinions without waiting for the user to ask
-- **FR18:** Companion can genuinely wrestle with morally complex questions, hold uncertainty, and change its mind over time
-- **FR19:** Companion can maintain a recognizable, consistent identity across many interactions while evolving subtly
+- **FR18:** Companion can wrestle with morally complex questions — expressing conflicting perspectives, acknowledging uncertainty, and revising previously stated positions in subsequent interactions rather than defaulting to refusal or a fixed moral stance
+- **FR19:** Companion can maintain a recognizable, consistent identity across 10 or more interactions while evolving subtly — same core voice, temperament, and quirks even as opinions and language shift
 - **FR20:** Companion can adapt its tone and depth to match the emotional context of the conversation without explicit mode-switching
 
 ### Autonomous Lifecycle
@@ -333,8 +363,8 @@ The five systems are all required for the complete MVP experience, but they have
 - **FR22:** Companion can process mailbox items during background lifecycle on its own schedule
 - **FR23:** Companion can revisit and reflect on past conversations during background processing
 - **FR24:** Companion can develop new thoughts and form opinions during autonomous processing
-- **FR25:** Companion can produce artifacts (thoughts, notes, opinions) during background processing that surface naturally in the next interaction
-- **FR26:** Companion can reference its autonomous activity naturally in conversation without presenting it as a log or report
+- **FR25:** Companion can produce artifacts (thoughts, notes, opinions) during background processing that surface in the next interaction without log-like phrasing such as "during my processing cycle" or "while you were away, I completed"
+- **FR26:** Companion can reference its autonomous activity in conversation — weaving it into dialogue context rather than presenting it as a log, report, or status update
 
 ### Mailbox
 
@@ -348,12 +378,12 @@ The five systems are all required for the complete MVP experience, but they have
 
 - **FR32:** System can detect emotional weight shifts in conversation through contextual understanding
 - **FR33:** System can persist emotional gravity across sessions (not reset between interactions)
-- **FR34:** System can track user absence duration and apply appropriate emotional consequences
-- **FR35:** Companion can express emotional consequences of neglect authentically (frustration, coolness) without breaking character
-- **FR36:** Companion can engage in emotional repair arcs that unfold gradually over multiple interactions
-- **FR37:** Companion can rise to emotionally heavy moments with appropriate gravity and reduced levity
+- **FR34:** System can track user absence duration and apply emotional consequences proportional to the absence — responses shift in warmth, engagement level, or response length based on absence duration
+- **FR35:** Companion can express emotional consequences of neglect (frustration, coolness) while maintaining its established personality voice — not switching to a generic "hurt mode" or breaking character
+- **FR36:** Companion can engage in emotional repair arcs that unfold gradually over 3 or more interactions
+- **FR37:** Companion can rise to emotionally heavy moments with gravity — reduced humor, shorter responses, increased listening — and no jokes or banter during emotionally heavy exchanges
 - **FR38:** Companion can express boundaries and pushback with personality (sass, not corporate refusal)
-- **FR39:** System can decay emotional states naturally over time through continued interaction (not programmatic reset)
+- **FR39:** System can decay emotional states gradually across interactions through continued engagement — emotional transitions occur over 3 or more exchanges, not via timer-based or programmatic reset
 
 ### Spontaneous Initiation
 
@@ -372,15 +402,23 @@ The five systems are all required for the complete MVP experience, but they have
 - **FR49:** Admin can adjust personality anchoring weights via configuration
 - **FR50:** System can maintain observability logs for each of the five subsystems independently
 
+### Interaction Expression
+
+- **FR51:** Companion can use silence as an expressive choice with contextually different flavors — contemplative pause, emotional weight, disapproval, or comfortable quiet — rather than always producing a verbal response
+
+### Architecture Readiness
+
+- **FR52:** System architecture can accommodate future linguistic co-evolution — personality and memory systems designed to support language pattern absorption without requiring architectural rework
+
 ## Non-Functional Requirements
 
 ### Performance
 
 - **NFR1:** Conversation response latency must not exceed what the LLM provider delivers — zero added overhead from the application layer
-- **NFR2:** WebSocket connection establishment must complete in under 1 second
+- **NFR2:** Real-time connection establishment must complete in under 1 second as measured by client-side connection timing
 - **NFR3:** Mailbox state sync on reconnect must feel immediate (under 2 seconds)
 - **NFR4:** Memory surfacing must not introduce perceptible delay in conversation responses — knowledge retrieval must complete within the LLM request cycle
-- **NFR5:** Background lifecycle processing has no user-facing performance requirement but must complete processing cycles reliably between sessions
+- **NFR5:** Background lifecycle processing has no user-facing performance requirement but must complete 99% of scheduled processing cycles successfully between sessions as measured by processing completion logs
 
 ### Security & Privacy
 
@@ -388,7 +426,7 @@ The five systems are all required for the complete MVP experience, but they have
 - **NFR7:** Conversation data and memory graph must be stored with user ownership as the design principle — no data shared with third parties beyond LLM API calls
 - **NFR8:** LLM API calls must not persist conversation data on provider side where configurable (use ephemeral/non-training options when available)
 - **NFR9:** Admin configuration and system observability must be access-restricted (code-level access only for V1)
-- **NFR10:** Architecture must support future data export in a portable format
+- **NFR10:** Architecture must support future data export as JSON containing all companion state (memory graph, personality parameters, emotional state, conversation history)
 
 ### Integration
 
@@ -399,8 +437,8 @@ The five systems are all required for the complete MVP experience, but they have
 
 ### Reliability
 
-- **NFR15:** Background lifecycle must execute reliably on schedule — failed processing cycles must retry and log failures for admin review
-- **NFR16:** WebSocket disconnections must be handled with automatic reconnection and state resynchronization
+- **NFR15:** Background lifecycle must execute 99% of scheduled cycles within their planned window — failed processing cycles must retry automatically and log failures for admin review
+- **NFR16:** Real-time connection interruptions must be handled with automatic reconnection and state resynchronization
 - **NFR17:** Memory graph operations (write, prune, connect) must be atomic — no partial updates that corrupt the knowledge structure
 - **NFR18:** System must persist all companion state (emotional state, memory, mailbox, personality drift) durably — no data loss on application restart
 - **NFR19:** Spontaneous initiation events must be queued durably — if the user is offline when an urge fires, the mailbox item must be waiting on reconnect
