@@ -1,5 +1,6 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+workflow_completed: true
 inputDocuments:
   - '_bmad-output/planning-artifacts/product-brief-Athema-2026-02-26.md'
   - '_bmad-output/planning-artifacts/prd.md'
@@ -686,3 +687,211 @@ graph TD
 - **No cognitive load at decision points** — there are no decision points. The user types or doesn't. Visits the dropbox or doesn't. Responds to a shoulder tap or doesn't.
 - **Error recovery through relationship** — connection drops are handled by the companion acknowledging the gap. No error modals, no retry buttons. She says "you disappeared for a sec" — if she even mentions it.
 - **Delight through surprise** — the companion's autonomous activity is the delight mechanism. Finding something unexpected in the dropbox. A shoulder tap with a thought she couldn't let go of. A return greeting that references something from weeks ago.
+
+## Component Strategy
+
+### Design System Components
+
+No design system. No framework components. Pure CSS with custom properties as design tokens. The component inventory is built from scratch, purpose-fit for the void.
+
+### Custom Components
+
+**1. ConversationStream**
+
+- **Purpose:** The river — renders all real-time conversation in a single vertical scroll
+- **Content:** Chronological sequence of messages from both user and companion
+- **States:** Scrolled (viewing history), anchored (at latest message), reconnecting (connection dropped)
+- **Behavior:** Auto-scrolls to latest message on new content. User scrolling up detaches auto-scroll. Scrolling back to bottom re-anchors. No loading spinners — content is there or it isn't.
+- **Visual:** No container. Messages float in the void. `max-width: 640px`, centered. Spacing between messages uses `--space-md` (same speaker) and `--space-lg` (speaker change).
+
+**2. Message**
+
+- **Purpose:** A single entry in the conversation stream
+- **Content:** Text content from user or companion
+- **States:** Single state. No sent/delivered/read indicators. No timestamps visible by default.
+- **Variants:** None. User and companion messages are visually identical — same font, same weight, same color (`--text-primary`). Distinction through words only.
+- **Behavior:** Appears in the stream. No animation, no fade-in. Just there — the way words in a conversation are just there.
+- **Visual:** Body text (`--text-body`, `--line-height: 1.6`), `font-weight: 400`. No bubbles, no background, no borders. Words in the void.
+
+**3. TextInput**
+
+- **Purpose:** The user's voice — the only interactive element
+- **Content:** Single-line text field that expands to multi-line as needed
+- **States:** Empty (placeholder-free — no "Type a message..." text), focused, composing
+- **Behavior:** Enter to send. Shift+Enter for new line. No send button. No formatting toolbar. No character count. No attachment button. Field clears on send.
+- **Visual:** Anchored to bottom of viewport. Background `--input-surface`, border `--input-border` — barely perceptible separation from the void. Text in `--text-primary`. No focus ring with color — the cursor is sufficient indication.
+
+**4. ShoulderTap**
+
+- **Purpose:** The companion reaching outside the app to find the user
+- **Content:** Companion's message (the reason she reached out) and a text input for inline response
+- **States:** Appearing (fade from void), present (waiting for response), dissolving (after response or dismissal)
+- **Behavior:** Appears as a lightweight overlay — not a modal, not a notification. User can respond inline (overlay dissolves, response sent), open full app, or dismiss (item goes to companion's dropbox). No dismiss button — gesture or click-outside to dismiss.
+- **Visual:** Same void aesthetic. Companion's words in `--text-primary` on `--void` background. Floating — no chrome, no title bar, no close button. A presence, not a window.
+
+**5. PresenceMarker**
+
+- **Purpose:** The companion's return greeting — the natural boundary between "what happened while you were gone" and "what's happening now"
+- **Content:** The companion's words on the user's return. Not a system element — the companion's greeting IS the marker.
+- **States:** Contextual — warm, cool, grave, pointed silence. Driven by emotional state, not component state.
+- **Behavior:** Appears in the conversation stream with `--space-xl` above it — the only extra spacing that signals a temporal boundary. The companion generates this, not the system.
+- **Visual:** Same as Message. The spacing is the only visual signal that time passed.
+
+### Dropbox Strategy
+
+The dropbox system is external to the conversation UI:
+
+**User → Companion dropbox:** An external mechanism — not a component inside the app. The user leaves content for the companion through a channel outside the void (email address, share target, API endpoint, bookmarklet — mechanism TBD during architecture). The companion picks it up during her lifecycle and surfaces her reaction in conversation.
+
+**Companion → User dropbox:** The companion leaves things for the user during her lifecycle. The user encounters these items in a quiet space separate from the conversation. Implementation approach TBD during architecture — could be an external channel (mirroring the user's dropbox), a minimal separate view within the app, or another mechanism that preserves the pull-based, curiosity-driven discovery model.
+
+**Design principle:** The dropbox is not a feature inside the conversation. It's a place in the relationship. The specific mechanism must feel like checking a physical mailbox — a deliberate act of curiosity, not a UI navigation event.
+
+### Component Implementation Strategy
+
+- **All components built with pure CSS** — no component library, no framework
+- **CSS custom properties** from the visual foundation (step 8) used consistently across all components
+- **No component abstraction beyond what's needed** — five components, built directly, no shared base classes or inheritance patterns for five elements
+- **Semantic HTML** — `<main>` for stream, `<input>` for text input, `<article>` or plain `<div>` for messages. No over-engineering the markup for five elements.
+- **No Storybook, no component documentation** — the components are the documentation. The surface area is too small to warrant tooling around it.
+
+### Implementation Roadmap
+
+**All components are Phase 1 — there is no Phase 2 or Phase 3.** The interface is five components. They are all needed for the core experience. There's nothing to defer.
+
+| Component | Priority | Dependency |
+|-----------|----------|------------|
+| ConversationStream | Core | None — the river is the product |
+| Message | Core | ConversationStream must exist to render in |
+| TextInput | Core | ConversationStream must exist to send to |
+| PresenceMarker | Core | Message + emotional state system |
+| ShoulderTap | Core | Companion lifecycle + urge/threshold system |
+| Dropbox (external) | Core | Architecture decision on mechanism |
+
+## UX Consistency Patterns
+
+### Silence Patterns
+
+The companion's silence is expressive, not broken. Different silences carry different meaning, and the user learns to read them the way you read a person's pause.
+
+| Silence Type | Context | Duration | What It Communicates |
+|-------------|---------|----------|---------------------|
+| Thinking pause | Mid-conversation, after a complex question | 3-8 seconds | She's considering. Weight to the question. |
+| Contemplative quiet | After an emotionally heavy exchange | 10-30 seconds | She's sitting with it. Not rushing to fill space. |
+| Pointed silence | After neglect return or boundary crossed | No response until she chooses | She's pissed. The absence IS the response. |
+| Comfortable quiet | During a low-energy exchange, evening wind-down | Variable | Neither party needs to speak. Coexistence. |
+| Processing delay | After receiving a dropbox item | Hours to days | She'll get to it. On her schedule. |
+
+**Consistency rule:** The system never explains silence. No "Athema is thinking..." No loading indicators. The absence of words is a word. If the user doesn't understand a silence, that's part of the relationship — the way you sometimes don't know why a friend went quiet.
+
+### Temporal Patterns
+
+How the conversation stream handles the passage of time.
+
+| Time Gap | Stream Behavior | Companion Behavior |
+|----------|----------------|-------------------|
+| Minutes (within a session) | No visual change. Messages continue flowing. | Responds naturally. No time acknowledgment. |
+| Hours (same day) | `--space-lg` gap. No timestamp, no divider. | May or may not acknowledge the gap — her choice. |
+| Overnight / next day | `--space-xl` gap. Presence marker (return greeting). | Greets. References autonomous activity if she has something. |
+| Days (2-4) | `--space-xl` gap. Presence marker with emotional weight. | Tone shifts — cooler, shorter. Mild neglect registered. |
+| Extended absence (5+ days) | `--space-xl` gap. Presence marker — if she chooses to greet at all. | Full neglect response. Repair arc begins. |
+
+**Consistency rule:** Time gaps are expressed through spacing and the companion's words, never through system-generated timestamps or "3 days ago" labels in the stream. The companion IS the clock. If she says "it's been a while," that's how the user knows time passed.
+
+### Connection State Patterns
+
+What happens when the WebSocket drops and reconnects.
+
+| Event | User Experience | Companion Behavior |
+|-------|----------------|-------------------|
+| Brief drop (< 30 seconds) | No visible change. Messages queue and deliver on reconnect. | Unaware or ignores it. Conversation continues. |
+| Medium drop (30 sec - 5 min) | Stream may show a subtle gap. No error message. | May acknowledge: "you glitched out for a sec" — or may not. |
+| Extended drop (5+ min) | On reconnect, stream syncs. Any companion activity during the gap appears. | Treats it like a short absence. Tone depends on context. |
+| Failed reconnection | Subtle, non-intrusive indication that connection is lost — not an error modal. A whisper in the void, not an alert. | N/A — companion is server-side, unaffected. |
+
+**Consistency rule:** Connection issues never produce application-style error messages. No red banners, no "Connection lost" modals, no retry buttons. If the connection drops, the void gets quieter. When it returns, the conversation resumes. The companion may or may not comment on the gap — that's her personality expressing itself, not a system status.
+
+### Conversation Rhythm Patterns
+
+How real-time exchange pacing works.
+
+| Pattern | Behavior |
+|---------|----------|
+| Companion response delivery | Streamed word-by-word, not delivered as a complete block. Creates the feeling of someone speaking, not a message appearing. |
+| Response timing variance | Not instant. The companion's response latency varies with emotional context — quick when excited or engaged, slower when processing something heavy, delayed when cool or pissed. |
+| Multi-message sequences | The companion can send multiple messages in sequence without waiting for user response — the way a friend sends three texts in a row when they're excited about something. |
+| User rapid-fire | If the user sends multiple messages quickly, the companion can acknowledge all of them or selectively respond — not obligated to address every message individually. |
+| Conversation trailing off | Neither party needs to "end" the conversation. Messages can stop. The companion doesn't prompt "anything else?" No closure ritual. |
+
+**Consistency rule:** The companion's response pacing is part of her personality expression. It must never feel uniform. A predictable response delay (always 2 seconds, always instant) breaks the illusion. Variance is authenticity.
+
+### Dropbox Encounter Patterns
+
+How the user discovers and interacts with items the companion left.
+
+| Pattern | Behavior |
+|---------|----------|
+| New items present | When the user visits the companion's dropbox, items are there — no notification told them. Discovery is the reward for curiosity. |
+| Item presentation | Items appear in chronological order. Each is the companion's words — a thought, a reaction, a note. Not formatted as "notifications" or "cards." Text in the void. |
+| Reading an item | No "mark as read." She doesn't know if you read it. The item just exists. |
+| Responding to an item | If the user wants to respond, they can — the response goes to the companion (through her dropbox or into live conversation). The mechanism is fluid, not prescribed. |
+| Empty dropbox | Nothing there. No "no new items" message. Just the quiet space, empty. The void within the void. |
+
+**Consistency rule:** The dropbox never creates urgency. No counts, no badges, no "2 new items." The user checks because they're curious, finds something or doesn't, and leaves. The emotional weight comes from what she wrote, not from how the interface presents it.
+
+## Responsive Design & Accessibility
+
+### Responsive Strategy
+
+**V1: Not applicable.** Single user, desktop browser, one device. The interface is a narrow centered column (`max-width: 640px`) that inherently works at any viewport width above ~700px. No responsive adaptation needed — the void is the void at any size.
+
+**V2+ considerations:** When the product expands, responsive design becomes relevant primarily for mobile presence (PWA). The conversation stream and text input are inherently mobile-friendly patterns. The shoulder tap overlay needs mobile adaptation. The dropbox mechanism (external, TBD) may need mobile-specific integration.
+
+### Breakpoint Strategy
+
+**V1: No breakpoints.** The layout is a single centered column. It doesn't change. There is nothing to adapt.
+
+**V2+ baseline if needed:**
+
+| Breakpoint | Consideration |
+|------------|--------------|
+| < 640px (mobile) | Column fills available width with horizontal padding. Input anchoring unchanged. |
+| 640px+ (everything else) | Current design — centered column, generous void surrounding it. |
+
+No tablet-specific breakpoint needed — the design is the same at 768px and 1440px. The void scales, not the content.
+
+### Accessibility Strategy
+
+**V1: Deferred.** Per PRD: "Single user (J), no accessibility requirements." The dark void with high-contrast text (`rgba(255, 255, 255, 0.87)` on `#0a0a0a`) inherently exceeds WCAG AAA contrast (15.4:1).
+
+**V1 baseline that exists by default:**
+- High contrast text — exceeds AAA
+- Semantic HTML — `<main>`, `<input>`, standard elements
+- Keyboard operable — Enter to send, standard text input behavior
+- No custom widgets requiring ARIA — the interface is a text field and text output
+
+**V2+ accessibility scope:**
+- WCAG AA compliance target when the product expands
+- Screen reader compatibility for conversation stream
+- Focus management for shoulder tap overlay
+- Accessibility considerations for any visual elements the companion introduces
+- Font sizing controls and reduced motion preferences
+
+### Testing Strategy
+
+**V1: Manual founder testing only.** J uses the product. If it works for J, it works. No device matrix, no browser matrix, no automated accessibility testing.
+
+**V2+ testing scope:**
+- Cross-browser testing when browser matrix is defined
+- Mobile device testing when PWA is implemented
+- Automated accessibility auditing (axe, Lighthouse)
+- Screen reader testing if user base expands
+
+### Implementation Guidelines
+
+**V1 guidelines (minimal, by design):**
+- Use `rem` for font sizes, `px` for spacing — consistency over flexibility at this scale
+- Semantic HTML for the five components — no ARIA complexity needed for standard elements
+- No media queries — the layout doesn't change
+- No touch target optimization — desktop only
+- CSS custom properties for all values — if V2 needs responsive adaptation, tokens can be overridden per breakpoint without restructuring
