@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(ls:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(go version:*)",
+      "Bash(/c/Go/bin/go.exe version:*)",
+      "Bash(docker:*)",
+      "Bash(go install:*)",
+      "Bash(go mod:*)",
+      "Bash(go get:*)",
+      "Bash(touch:*)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(timeout 3 ./bin/athema-server.exe:*)",
+      "Bash(go run:*)"
     ]
   }
 }

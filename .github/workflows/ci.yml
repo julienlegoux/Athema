@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Build
+        run: go build -o bin/athema-server cmd/server/main.go
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Unit Tests
+        run: go test ./... -v -race
+
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_DB: athema_test
+          POSTGRES_USER: athema
+          POSTGRES_PASSWORD: athema_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U athema -d athema_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Integration Tests
+        env:
+          ATHEMA_DB_HOST: localhost
+          ATHEMA_DB_PORT: 5432
+          ATHEMA_DB_DATABASE: athema_test
+          ATHEMA_DB_USERNAME: athema
+          ATHEMA_DB_PASSWORD: athema_test
+          ATHEMA_DB_SSLMODE: disable
+        run: go test -tags integration ./... -v -race
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_DB: athema_test
+          POSTGRES_USER: athema
+          POSTGRES_PASSWORD: athema_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U athema -d athema_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: E2E Tests
+        env:
+          ATHEMA_DB_HOST: localhost
+          ATHEMA_DB_PORT: 5432
+          ATHEMA_DB_DATABASE: athema_test
+          ATHEMA_DB_USERNAME: athema
+          ATHEMA_DB_PASSWORD: athema_test
+          ATHEMA_DB_SSLMODE: disable
+        run: go test -tags e2e ./... -v -race

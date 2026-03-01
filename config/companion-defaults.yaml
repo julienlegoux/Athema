@@ -1,0 +1,19 @@
+personality:
+  warmth: 0.7
+  curiosity: 0.8
+  assertiveness: 0.5
+  humor: 0.6
+  formality: 0.3
+
+emotional:
+  sensitivity: 0.7
+  resilience: 0.6
+  expressiveness: 0.7
+
+lifecycle:
+  reflection_interval_minutes: 60
+  idle_threshold_minutes: 30
+
+initiation:
+  urge_decay_rate: 0.1
+  threshold: 0.8
