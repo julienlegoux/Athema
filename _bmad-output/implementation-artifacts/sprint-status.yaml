@@ -1,0 +1,114 @@
+# generated: 2026-03-01
+# project: Athema
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: D:\Project\Athema\_bmad-output\implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-01
+project: Athema
+project_key: NOKEY
+tracking_system: file-system
+story_location: "D:\\Project\\Athema\\_bmad-output\\implementation-artifacts"
+
+development_status:
+  # Epic 1: Foundation & First Conversation
+  epic-1: backlog
+  1-1-project-scaffold-and-development-environment: backlog
+  1-2-domain-foundation-and-event-bus: backlog
+  1-3-llm-provider-abstraction: backlog
+  1-4-conversation-persistence-and-history: backlog
+  1-5-websocket-server-and-real-time-protocol: backlog
+  1-6-conversation-engine: backlog
+  1-7-tui-client-the-void: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Companion Personality & Onboarding
+  epic-2: backlog
+  2-1-personality-state-model-and-configuration: backlog
+  2-2-personality-prompt-architecture: backlog
+  2-3-onboarding-the-first-meeting: backlog
+  2-4-opinion-formation-and-adaptive-morality: backlog
+  2-5-personality-consistency-and-drift-tracking: backlog
+  2-6-silence-as-expression-and-response-timing: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Living Memory
+  epic-3: backlog
+  3-1-knowledge-graph-schema-and-repository: backlog
+  3-2-knowledge-extraction-pipeline: backlog
+  3-3-connection-formation-and-strengthening: backlog
+  3-4-memory-curation-pruning-and-pattern-promotion: backlog
+  3-5-memory-surfacing-in-conversation: backlog
+  3-6-contradiction-detection-and-thread-tracking: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Autonomous Lifecycle
+  epic-4: backlog
+  4-1-background-lifecycle-infrastructure: backlog
+  4-2-conversation-reflection-and-thought-development: backlog
+  4-3-autonomous-artifact-production-and-natural-re-entry: backlog
+  4-4-connection-continuity-and-presence: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: The Mutual Mailbox
+  epic-5: backlog
+  5-1-mailbox-schema-and-domain-model: backlog
+  5-2-user-to-companion-dropbox: backlog
+  5-3-companion-mailbox-processing-and-reaction-formation: backlog
+  5-4-companion-to-user-dropbox: backlog
+  5-5-dropbox-tui-views-and-discovery: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Emotional Depth
+  epic-6: backlog
+  6-1-emotional-state-schema-and-domain-model: backlog
+  6-2-emotional-weight-detection-and-gravity-persistence: backlog
+  6-3-neglect-tracking-and-emotional-consequences: backlog
+  6-4-emotional-repair-arcs: backlog
+  6-5-emotional-gravity-boundaries-and-decay: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Spontaneous Initiation
+  epic-7: backlog
+  7-1-initiation-schema-and-urge-accumulation: backlog
+  7-2-threshold-triggering-and-initiation-delivery: backlog
+  7-3-shoulder-tap-companion-initiated-overlay: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: System Observability & Administration
+  epic-8: backlog
+  8-1-per-subsystem-observability-logs: backlog
+  8-2-memory-graph-inspection-and-curation-tuning: backlog
+  8-3-lifecycle-monitoring-and-initiation-tuning: backlog
+  8-4-personality-drift-metrics-and-anchoring-configuration: backlog
+  8-5-llm-cost-tracking-and-data-export-readiness: backlog
+  epic-8-retrospective: optional
