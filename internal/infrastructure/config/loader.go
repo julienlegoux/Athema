@@ -2,8 +2,10 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -43,7 +45,8 @@ type DBConfig struct {
 func (c DBConfig) DSN() string {
 	return fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
-		c.Username, c.Password, c.Host, c.Port, c.Database, c.SSLMode,
+		url.QueryEscape(c.Username), url.QueryEscape(c.Password),
+		c.Host, c.Port, c.Database, c.SSLMode,
 	)
 }
 
@@ -114,12 +117,21 @@ func applyEnvToStruct(v reflect.Value) {
 		case reflect.String:
 			fieldVal.SetString(envVal)
 		case reflect.Int:
-			var intVal int
-			if _, err := fmt.Sscanf(envVal, "%d", &intVal); err == nil {
-				fieldVal.SetInt(int64(intVal))
+			intVal, err := strconv.Atoi(envVal)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "config: env %s=%q is not a valid integer, keeping YAML default\n", envTag, envVal)
+				continue
 			}
+			fieldVal.SetInt(int64(intVal))
 		case reflect.Bool:
-			fieldVal.SetBool(strings.EqualFold(envVal, "true") || envVal == "1")
+			switch strings.ToLower(envVal) {
+			case "true", "1":
+				fieldVal.SetBool(true)
+			case "false", "0":
+				fieldVal.SetBool(false)
+			default:
+				fmt.Fprintf(os.Stderr, "config: env %s=%q is not a valid boolean, keeping YAML default\n", envTag, envVal)
+			}
 		}
 	}
 }

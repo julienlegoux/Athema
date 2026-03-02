@@ -1,6 +1,6 @@
 # Story 1.1: Project Scaffold & Development Environment
 
-Status: review
+Status: done
 
 ## Story
 
@@ -403,6 +403,8 @@ Claude Opus 4.6 (claude-opus-4-6)
 |--------|------|--------|
 | Story created | 2026-03-01 | Initial story creation from sprint planning |
 | Full implementation completed | 2026-03-02 | All 10 tasks implemented: Clean Architecture scaffold, Docker, Makefile, config, logging, Air, CI, migrations, .gitignore |
+| Code review fixes applied | 2026-03-02 | Fixed 7 issues: go.mod version (H1), WebSocket hub scaffold (H2), env var parse warnings (H3), dead loggers removed (M1), DSN URL encoding (M2), CORS restricted to localhost (M3), graceful shutdown error channel (M4). 2 new tests added. |
+| Second code review | 2026-03-02 | Adversarial review found prior fixes were never committed (only docs committed in cf2f300). Fixed M3 (added test-race Makefile target). All prior fixes confirmed present in working tree. Recommend committing story 1-1 source fixes before continuing story 1-2. |
 
 ### File List
 
@@ -426,6 +428,7 @@ Claude Opus 4.6 (claude-opus-4-6)
 - internal/usecase/initiation/doc.go (new) — Initiation usecase stub
 - internal/adapter/repository/postgres/doc.go (new) — Postgres repository stub
 - internal/adapter/handler/websocket/doc.go (new) — WebSocket handler stub
+- internal/adapter/handler/websocket/hub.go (new) — WebSocket Hub and Client scaffold (register/unregister/count)
 - internal/adapter/handler/rest/doc.go (new) — REST handler stub
 - internal/adapter/presenter/prompt/doc.go (new) — Prompt presenter stub
 - internal/infrastructure/config/loader.go (new) — YAML config + env var overrides
@@ -440,7 +443,7 @@ Claude Opus 4.6 (claude-opus-4-6)
 - .env.example (new) — Environment variable template
 - Dockerfile (new) — Multi-stage build for server
 - docker-compose.yml (new) — athema-server + postgres (pgvector:pg17)
-- Makefile (new) — Build, test, run targets
+- Makefile (modified) — Build, test, test-race, run targets
 - .air.toml (new) — Air hot reload configuration
 - .github/workflows/ci.yml (new) — GitHub Actions CI pipeline
 - .gitignore (new) — Git ignore rules

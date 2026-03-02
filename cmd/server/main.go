@@ -26,15 +26,6 @@ func main() {
 	slog.SetDefault(baseLogger)
 
 	serverLogger := baseLogger.With("subsystem", "server")
-	dbLogger := baseLogger.With("subsystem", "database")
-
-	// Per-subsystem loggers — passed via DI to subsystem services when created.
-	_ = baseLogger.With("subsystem", "memory")
-	_ = baseLogger.With("subsystem", "conversation")
-	_ = baseLogger.With("subsystem", "personality")
-	_ = baseLogger.With("subsystem", "emotional")
-	_ = baseLogger.With("subsystem", "lifecycle")
-	_ = baseLogger.With("subsystem", "initiation")
 
 	// Load configuration.
 	cfg, err := config.Load("config/default.yaml")
@@ -64,8 +55,6 @@ func main() {
 		"log_level", cfg.Log.Level,
 	)
 
-	_ = dbLogger // Will be used when database connection is established in later stories.
-
 	// Create HTTP server.
 	srv := server.New(cfg.Server, serverLogger)
 
@@ -73,16 +62,20 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
+	errCh := make(chan error, 1)
 	go func() {
 		serverLogger.Info("server started", "port", cfg.Server.Port)
 		if err := srv.Start(); err != nil && err != http.ErrServerClosed {
-			serverLogger.Error("server error", "error", err)
-			os.Exit(1)
+			errCh <- err
 		}
 	}()
 
-	<-ctx.Done()
-	serverLogger.Info("shutdown signal received")
+	select {
+	case <-ctx.Done():
+		serverLogger.Info("shutdown signal received")
+	case err := <-errCh:
+		serverLogger.Error("server error", "error", err)
+	}
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

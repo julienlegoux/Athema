@@ -1,4 +1,4 @@
-.PHONY: all build test test-integration test-e2e run run-server run-tui migrate-up migrate-down clean docker-up docker-down
+.PHONY: all build test test-race test-integration test-e2e run run-server run-tui migrate-up migrate-down clean docker-up docker-down
 
 all: build test
 
@@ -11,6 +11,11 @@ build:
 test:
 	@echo "Running unit tests..."
 	@go test ./... -v
+
+# Run unit tests with race detector (requires CGO — matches CI)
+test-race:
+	@echo "Running unit tests with race detector..."
+	@CGO_ENABLED=1 go test -race ./... -v
 
 # Run integration tests (requires running PostgreSQL)
 test-integration:

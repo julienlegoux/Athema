@@ -147,3 +147,55 @@ func TestDBConfig_DSN(t *testing.T) {
 		t.Errorf("DSN() = %q, want %q", got, want)
 	}
 }
+
+func TestDBConfig_DSN_SpecialChars(t *testing.T) {
+	cfg := DBConfig{
+		Host:     "localhost",
+		Port:     5432,
+		Database: "athema",
+		Username: "user@org",
+		Password: "p@ss:word",
+		SSLMode:  "disable",
+	}
+	got := cfg.DSN()
+	want := "postgres://user%40org:p%40ss%3Aword@localhost:5432/athema?sslmode=disable"
+	if got != want {
+		t.Errorf("DSN() = %q, want %q", got, want)
+	}
+}
+
+func TestLoad_InvalidEnvValue(t *testing.T) {
+	dir := t.TempDir()
+	cfgPath := filepath.Join(dir, "config.yaml")
+
+	yamlContent := `
+server:
+  host: "localhost"
+  port: 8080
+db:
+  host: "localhost"
+  port: 5432
+  database: "athema"
+  username: "athema"
+  password: "secret"
+  sslmode: "disable"
+log:
+  level: "info"
+  format: "json"
+`
+	if err := os.WriteFile(cfgPath, []byte(yamlContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("ATHEMA_SERVER_PORT", "not_a_number")
+
+	cfg, err := Load(cfgPath)
+	if err != nil {
+		t.Fatalf("Load() error: %v", err)
+	}
+
+	// Invalid env value should keep YAML default
+	if cfg.Server.Port != 8080 {
+		t.Errorf("Server.Port = %d, want %d (YAML default when env is invalid)", cfg.Server.Port, 8080)
+	}
+}
