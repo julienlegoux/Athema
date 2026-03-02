@@ -376,15 +376,82 @@ pgvector 0.8.2 fixes CVE-2026-3172 (buffer overflow in parallel HNSW index build
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (claude-opus-4-6)
 
 ### Debug Log References
 
+- Go Blueprint scaffolded to /tmp/blueprint-scaffold/athema, reviewed output, adapted patterns into Clean Architecture structure
+- Blueprint go.mod used Go 1.25.0 and cmd/api — updated to Go 1.26.0 and cmd/server
+- Blueprint database.go used database/sql with singleton — replaced with pgxpool-based implementation
+- Blueprint docker-compose used BLUEPRINT_ env prefix and postgres:latest — replaced with ATHEMA_ prefix and pgvector/pgvector:pg17
+
 ### Completion Notes List
+
+- Task 1: Go Blueprint v0.10.11 installed and scaffold generated. Reviewed what it provides (chi router, pgx driver, WebSocket, Docker basics) vs what needed restructuring (full Clean Architecture, config system, slog logging, correct env prefix)
+- Task 2: Full Clean Architecture created with 4 layers (domain, usecase, adapter, infrastructure) + app lifecycle. All 6 subsystems (memory, conversation, personality, emotional, lifecycle, initiation) stubbed in domain and usecase layers. Domain layer has zero project imports. Composition root at cmd/server/main.go with constructor injection only
+- Task 3: docker-compose.yml with athema-server and postgres (pgvector/pgvector:pg17) services, persistent pgdata volume, health checks. Multi-stage Dockerfile using golang:1.26-alpine. .env.example created with all ATHEMA_ variables
+- Task 4: Makefile with all required targets (build, test, test-integration, test-e2e, migrate-up, migrate-down, run, run-server, run-tui). Build verified — compiles without errors. Tests pass
+- Task 5: Config system with YAML loading + env var overrides via struct tags. Config struct covers server, db, llm, log, and all 6 subsystems. 5 unit tests all passing (Load, EnvOverrides, FileNotFound, InvalidYAML, DSN)
+- Task 6: log/slog with JSON handler to stdout. Per-subsystem tagged loggers created in composition root. Verified JSON output: {"time":"...","level":"INFO","msg":"server started","subsystem":"server","port":8080}
+- Task 7: .air.toml configured for Windows, watches .go and .yaml files, excludes _bmad directories
+- Task 8: GitHub Actions CI with 4 jobs: build, test (unit), integration-test (with pgvector PostgreSQL service), e2e-test. All using Go 1.26 and build tags
+- Task 9: migrations/, test/integration/, test/e2e/, test/fixtures/llm/ directories created with .gitkeep. golang-migrate infrastructure in internal/infrastructure/database/migrate.go
+- Task 10: .gitignore covers binaries, .env, vendor, tmp, IDE files. Final verification: make build succeeds, make test passes (5/5 tests), docker compose config valid, server starts with structured JSON logs
 
 ### Change Log
 | Change | Date | Reason |
 |--------|------|--------|
 | Story created | 2026-03-01 | Initial story creation from sprint planning |
+| Full implementation completed | 2026-03-02 | All 10 tasks implemented: Clean Architecture scaffold, Docker, Makefile, config, logging, Air, CI, migrations, .gitignore |
 
 ### File List
+
+- cmd/server/main.go (new) — Composition root with config loading, structured logging, graceful shutdown
+- cmd/tui/main.go (new) — TUI entry point stub
+- internal/domain/types.go (new) — CompanionID, UserID, SessionID value types
+- internal/domain/events.go (new) — Event interface and BaseEvent
+- internal/domain/errors.go (new) — Domain sentinel errors
+- internal/domain/memory/doc.go (new) — Memory subsystem domain stub
+- internal/domain/conversation/doc.go (new) — Conversation subsystem domain stub
+- internal/domain/personality/doc.go (new) — Personality subsystem domain stub
+- internal/domain/emotional/doc.go (new) — Emotional subsystem domain stub
+- internal/domain/lifecycle/doc.go (new) — Lifecycle subsystem domain stub
+- internal/domain/initiation/doc.go (new) — Initiation subsystem domain stub
+- internal/app/lifecycle.go (new) — Service interface (Start, Stop, Health, Ready)
+- internal/usecase/memory/doc.go (new) — Memory usecase stub
+- internal/usecase/conversation/doc.go (new) — Conversation usecase stub
+- internal/usecase/personality/doc.go (new) — Personality usecase stub
+- internal/usecase/emotional/doc.go (new) — Emotional usecase stub
+- internal/usecase/lifecycle/doc.go (new) — Lifecycle usecase stub
+- internal/usecase/initiation/doc.go (new) — Initiation usecase stub
+- internal/adapter/repository/postgres/doc.go (new) — Postgres repository stub
+- internal/adapter/handler/websocket/doc.go (new) — WebSocket handler stub
+- internal/adapter/handler/rest/doc.go (new) — REST handler stub
+- internal/adapter/presenter/prompt/doc.go (new) — Prompt presenter stub
+- internal/infrastructure/config/loader.go (new) — YAML config + env var overrides
+- internal/infrastructure/config/loader_test.go (new) — Config loader unit tests (5 tests)
+- internal/infrastructure/server/server.go (new) — chi HTTP server with health endpoint
+- internal/infrastructure/database/database.go (new) — pgxpool connection management
+- internal/infrastructure/database/migrate.go (new) — golang-migrate infrastructure
+- internal/infrastructure/llm/doc.go (new) — LLM provider stub
+- internal/infrastructure/eventbus/doc.go (new) — Event bus stub
+- config/default.yaml (new) — Default subsystem configuration
+- config/companion-defaults.yaml (new) — Base personality parameters
+- .env.example (new) — Environment variable template
+- Dockerfile (new) — Multi-stage build for server
+- docker-compose.yml (new) — athema-server + postgres (pgvector:pg17)
+- Makefile (new) — Build, test, run targets
+- .air.toml (new) — Air hot reload configuration
+- .github/workflows/ci.yml (new) — GitHub Actions CI pipeline
+- .gitignore (new) — Git ignore rules
+- go.mod (new) — Go module definition
+- go.sum (new) — Go module checksums
+- migrations/.gitkeep (new) — Migrations directory placeholder
+- test/integration/.gitkeep (new) — Integration test directory
+- test/e2e/.gitkeep (new) — E2E test directory
+- test/fixtures/llm/.gitkeep (new) — LLM fixture directory
+- tui/client/.gitkeep (new) — TUI client directory
+- tui/views/chat/.gitkeep (new) — TUI chat view directory
+- tui/views/mailbox/.gitkeep (new) — TUI mailbox view directory
+- tui/views/drop/.gitkeep (new) — TUI drop view directory
+- tui/theme/.gitkeep (new) — TUI theme directory

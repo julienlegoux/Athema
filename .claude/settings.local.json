@@ -13,7 +13,8 @@
       "Bash(go build:*)",
       "Bash(go test:*)",
       "Bash(timeout 3 ./bin/athema-server.exe:*)",
-      "Bash(go run:*)"
+      "Bash(go run:*)",
+      "Bash(go vet:*)"
     ]
   }
 }
