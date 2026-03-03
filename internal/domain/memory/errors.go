@@ -1,8 +1,12 @@
 package memory
 
-import "errors"
+import (
+	"fmt"
+
+	"athema/internal/domain"
+)
 
 var (
-	ErrNodeNotFound = errors.New("memory.node_not_found")
-	ErrEdgeNotFound = errors.New("memory.edge_not_found")
+	ErrNodeNotFound = fmt.Errorf("memory: node %w", domain.ErrNotFound)
+	ErrEdgeNotFound = fmt.Errorf("memory: edge %w", domain.ErrNotFound)
 )

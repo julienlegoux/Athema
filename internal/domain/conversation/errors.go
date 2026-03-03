@@ -1,8 +1,12 @@
 package conversation
 
-import "errors"
+import (
+	"fmt"
+
+	"athema/internal/domain"
+)
 
 var (
-	ErrConversationNotFound = errors.New("conversation.not_found")
-	ErrMessageEmpty         = errors.New("conversation.message_empty")
+	ErrConversationNotFound = fmt.Errorf("conversation: %w", domain.ErrNotFound)
+	ErrMessageEmpty         = fmt.Errorf("conversation: message empty: %w", domain.ErrInvalidInput)
 )

@@ -9,7 +9,7 @@ import (
 
 // PersonalitySnapshot represents a point-in-time capture of personality state.
 type PersonalitySnapshot struct {
-	ID          domain.MessageID   `json:"id"`
+	ID          domain.SnapshotID  `json:"id"`
 	CompanionID domain.CompanionID `json:"companionId"`
 	Payload     json.RawMessage    `json:"payload"`
 	CreatedAt   time.Time          `json:"createdAt"`

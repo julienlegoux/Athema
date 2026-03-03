@@ -37,9 +37,14 @@ func NewBus(logger *slog.Logger) *Bus {
 
 // Subscribe registers a handler for the given event type.
 // The handler will be called asynchronously in its own goroutine.
+// Returns without effect if the bus has been closed.
 func (b *Bus) Subscribe(eventType string, handler func(domain.Event)) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	if b.closed {
+		return
+	}
 
 	sub := &subscriber{
 		ch:      make(chan domain.Event, b.bufferSize),

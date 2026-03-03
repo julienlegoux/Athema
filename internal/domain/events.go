@@ -28,3 +28,15 @@ func NewBaseEvent(eventType string, companionID CompanionID) BaseEvent {
 		CompanionID: companionID,
 	}
 }
+
+// EventPublisher is the port interface for publishing domain events.
+// Implemented by infrastructure/eventbus.Bus.
+type EventPublisher interface {
+	Publish(event Event)
+}
+
+// EventSubscriber is the port interface for subscribing to domain events.
+// Implemented by infrastructure/eventbus.Bus.
+type EventSubscriber interface {
+	Subscribe(eventType string, handler func(Event))
+}

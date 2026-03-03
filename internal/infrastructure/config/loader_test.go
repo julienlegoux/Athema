@@ -164,6 +164,50 @@ func TestDBConfig_DSN_SpecialChars(t *testing.T) {
 	}
 }
 
+func TestLoad_SubsystemEnvOverride(t *testing.T) {
+	dir := t.TempDir()
+	cfgPath := filepath.Join(dir, "config.yaml")
+
+	yamlContent := `
+server:
+  host: "localhost"
+  port: 8080
+db:
+  host: "localhost"
+  port: 5432
+  database: "athema"
+  username: "athema"
+  password: "secret"
+  sslmode: "disable"
+log:
+  level: "info"
+  format: "json"
+memory:
+  enabled: true
+conversation:
+  enabled: true
+`
+	if err := os.WriteFile(cfgPath, []byte(yamlContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Override subsystem enabled via env var (auto-derived: ATHEMA_MEMORY_ENABLED).
+	t.Setenv("ATHEMA_MEMORY_ENABLED", "false")
+	t.Setenv("ATHEMA_CONVERSATION_ENABLED", "false")
+
+	cfg, err := Load(cfgPath)
+	if err != nil {
+		t.Fatalf("Load() error: %v", err)
+	}
+
+	if cfg.Memory.Enabled {
+		t.Error("Memory.Enabled = true, want false (env override)")
+	}
+	if cfg.Conversation.Enabled {
+		t.Error("Conversation.Enabled = true, want false (env override)")
+	}
+}
+
 func TestLoad_InvalidEnvValue(t *testing.T) {
 	dir := t.TempDir()
 	cfgPath := filepath.Join(dir, "config.yaml")

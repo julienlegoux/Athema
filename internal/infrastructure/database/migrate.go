@@ -24,7 +24,11 @@ func RunMigrations(dsn string, migrationsPath string, logger *slog.Logger) error
 		return fmt.Errorf("running migrations: %w", err)
 	}
 
-	version, dirty, _ := m.Version()
-	logger.Info("migrations applied", "version", version, "dirty", dirty)
+	version, dirty, vErr := m.Version()
+	if vErr != nil {
+		logger.Warn("migrations applied but version retrieval failed", "error", vErr)
+	} else {
+		logger.Info("migrations applied", "version", version, "dirty", dirty)
+	}
 	return nil
 }

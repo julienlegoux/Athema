@@ -2,6 +2,7 @@ package conversation_test
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 
@@ -33,6 +34,18 @@ func TestMessage_JSONMarshalCamelCase(t *testing.T) {
 	for _, key := range expected {
 		if _, ok := raw[key]; !ok {
 			t.Errorf("expected camelCase key %q in JSON output", key)
+		}
+	}
+
+	// Verify IDs are UUID strings, not arrays.
+	for _, key := range []string{"id", "conversationId", "companionId"} {
+		val := string(raw[key])
+		if val[0] == '[' {
+			t.Errorf("field %q serialized as array instead of UUID string: %s", key, val)
+		}
+		// UUID strings are 36 chars + quotes = 38 chars.
+		if len(val) != 38 {
+			t.Errorf("field %q expected UUID string (38 chars with quotes), got %d chars: %s", key, len(val), val)
 		}
 	}
 }
@@ -74,6 +87,15 @@ func TestMessage_JSONRoundTrip(t *testing.T) {
 	}
 	if !decoded.CreatedAt.Equal(original.CreatedAt) {
 		t.Errorf("CreatedAt mismatch: got %v, want %v", decoded.CreatedAt, original.CreatedAt)
+	}
+}
+
+func TestConversationErrors_WrapDomainErrors(t *testing.T) {
+	if !errors.Is(conversation.ErrConversationNotFound, domain.ErrNotFound) {
+		t.Error("ErrConversationNotFound should wrap domain.ErrNotFound")
+	}
+	if !errors.Is(conversation.ErrMessageEmpty, domain.ErrInvalidInput) {
+		t.Error("ErrMessageEmpty should wrap domain.ErrInvalidInput")
 	}
 }
 

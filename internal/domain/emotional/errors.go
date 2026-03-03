@@ -1,7 +1,11 @@
 package emotional
 
-import "errors"
+import (
+	"fmt"
+
+	"athema/internal/domain"
+)
 
 var (
-	ErrStateNotFound = errors.New("emotional.state_not_found")
+	ErrStateNotFound = fmt.Errorf("emotional: state %w", domain.ErrNotFound)
 )

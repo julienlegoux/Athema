@@ -11,5 +11,5 @@ import (
 type MemoryRepository interface {
 	WithTx(ctx context.Context, fn func(MemoryRepository) error) error
 	CreateNode(ctx context.Context, node KnowledgeNode) error
-	GetNodeByID(ctx context.Context, companionID domain.CompanionID, nodeID domain.MessageID) (*KnowledgeNode, error)
+	GetNodeByID(ctx context.Context, companionID domain.CompanionID, nodeID domain.KnowledgeNodeID) (*KnowledgeNode, error)
 }

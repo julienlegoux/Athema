@@ -1,6 +1,6 @@
 # Story 1.2: Domain Foundation & Event Bus
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -396,6 +396,7 @@ Claude Opus 4.6
 |--------|------|--------|
 | Story created | 2026-03-02 | Ultimate context engine analysis completed — comprehensive developer guide created |
 | Story implementation completed | 2026-03-02 | All 10 tasks implemented: domain entities, repository interfaces, provider interfaces, events, errors, event bus, and unit tests |
+| Code review fixes applied | 2026-03-02 | Fixed 8 issues: C1 (ID types JSON marshal as UUID strings), C2 (entity-specific ID types replacing incorrect MessageID usage), H1 (EventPublisher/EventSubscriber port interfaces), H2 (subsystem errors wrap domain errors), H3 (Subscribe after Close guard), M1 (subsystem config env var override), M2 (migrate.go error handling), M3 (sprint-status relative path). 9 new tests added. 32 total tests passing. |
 
 ### File List
 

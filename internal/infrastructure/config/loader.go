@@ -65,7 +65,7 @@ type LogConfig struct {
 
 // SubsystemConfig holds per-subsystem configuration stubs.
 type SubsystemConfig struct {
-	Enabled bool `yaml:"enabled" env:""`
+	Enabled bool `yaml:"enabled"`
 }
 
 // Load reads configuration from a YAML file and applies environment variable overrides.
@@ -88,22 +88,36 @@ func Load(path string) (*Config, error) {
 }
 
 // applyEnvOverrides walks the config struct and overrides values with matching environment variables.
+// Fields with explicit env tags use those names. Fields without env tags auto-derive
+// the env var name from the config hierarchy (e.g., ATHEMA_MEMORY_ENABLED).
 func applyEnvOverrides(cfg *Config) {
-	applyEnvToStruct(reflect.ValueOf(cfg).Elem())
+	applyEnvToStruct(reflect.ValueOf(cfg).Elem(), "ATHEMA")
 }
 
-func applyEnvToStruct(v reflect.Value) {
+func applyEnvToStruct(v reflect.Value, prefix string) {
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		fieldVal := v.Field(i)
 
 		if fieldVal.Kind() == reflect.Struct {
-			applyEnvToStruct(fieldVal)
+			yamlTag := field.Tag.Get("yaml")
+			nestedPrefix := prefix
+			if yamlTag != "" && yamlTag != "-" {
+				nestedPrefix = prefix + "_" + strings.ToUpper(yamlTag)
+			}
+			applyEnvToStruct(fieldVal, nestedPrefix)
 			continue
 		}
 
 		envTag := field.Tag.Get("env")
+		if envTag == "" {
+			// Auto-derive env var name from prefix + yaml tag.
+			yamlTag := field.Tag.Get("yaml")
+			if yamlTag != "" && yamlTag != "-" && prefix != "" {
+				envTag = prefix + "_" + strings.ToUpper(yamlTag)
+			}
+		}
 		if envTag == "" {
 			continue
 		}

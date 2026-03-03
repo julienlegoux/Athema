@@ -243,6 +243,19 @@ func TestBus_BufferOverflow_DropsEvent(t *testing.T) {
 	t.Logf("buffer overflow test: published 300, received %d (some dropped as expected)", got)
 }
 
+func TestBus_SubscribeAfterClose_NoLeak(t *testing.T) {
+	bus := eventbus.NewBus(newTestLogger())
+	bus.Close()
+
+	// Subscribing after close should not start a goroutine or panic.
+	bus.Subscribe("post.close", func(e domain.Event) {
+		t.Fatal("handler should never be called after close")
+	})
+
+	// Publishing should also be safe after close.
+	bus.Publish(newTestEvent("post.close"))
+}
+
 func TestBus_NoSubscribers_NoBlock(t *testing.T) {
 	bus := eventbus.NewBus(newTestLogger())
 	defer bus.Close()

@@ -1,7 +1,11 @@
 package personality
 
-import "errors"
+import (
+	"fmt"
+
+	"athema/internal/domain"
+)
 
 var (
-	ErrSnapshotNotFound = errors.New("personality.snapshot_not_found")
+	ErrSnapshotNotFound = fmt.Errorf("personality: snapshot %w", domain.ErrNotFound)
 )
