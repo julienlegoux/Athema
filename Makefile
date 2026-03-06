@@ -47,6 +47,10 @@ migrate-up:
 migrate-down:
 	@go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate -path migrations -database "$${ATHEMA_DB_DSN}" down
 
+# Create a new migration file pair (usage: make migrate-create NAME=create_foo)
+migrate-create:
+	@go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate create -ext sql -dir migrations -seq $(NAME)
+
 # Clean build artifacts
 clean:
 	@echo "Cleaning..."

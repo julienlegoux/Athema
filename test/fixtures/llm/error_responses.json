@@ -1,0 +1,25 @@
+{
+  "rateLimited": {
+    "statusCode": 429,
+    "message": "Rate limit exceeded"
+  },
+  "authFailure": {
+    "statusCode": 401,
+    "message": "Invalid API key"
+  },
+  "forbidden": {
+    "statusCode": 403,
+    "message": "Access denied"
+  },
+  "badRequest": {
+    "statusCode": 400,
+    "message": "Invalid request body"
+  },
+  "serverError": {
+    "statusCode": 500,
+    "message": "Internal server error"
+  },
+  "timeout": {
+    "message": "context deadline exceeded"
+  }
+}

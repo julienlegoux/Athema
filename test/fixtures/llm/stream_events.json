@@ -1,0 +1,9 @@
+[
+  {"contentDelta": "Hello", "isFinal": false},
+  {"contentDelta": "!", "isFinal": false},
+  {"contentDelta": " How", "isFinal": false},
+  {"contentDelta": " can", "isFinal": false},
+  {"contentDelta": " I", "isFinal": false},
+  {"contentDelta": " help?", "isFinal": false},
+  {"isFinal": true, "inputTokens": 15, "outputTokens": 9}
+]

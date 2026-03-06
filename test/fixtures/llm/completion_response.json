@@ -1,0 +1,7 @@
+{
+  "content": "Hello! How can I help you today?",
+  "inputTokens": 15,
+  "outputTokens": 9,
+  "model": "claude-sonnet-4-20250514",
+  "stopReason": "end_turn"
+}
